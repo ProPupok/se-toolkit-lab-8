@@ -51,10 +51,16 @@ async def unhandled_exception_handler(exc: Exception):
 
 
 @app.middleware("http")
-async def log_requests(request: Request, call_next: RequestResponseEndpoint) -> Response:
+async def log_requests(
+    request: Request, call_next: RequestResponseEndpoint
+) -> Response:
     logger.info(
         "request_started",
-        extra={"event": "request_started", "method": request.method, "path": request.url.path},
+        extra={
+            "event": "request_started",
+            "method": request.method,
+            "path": request.url.path,
+        },
     )
     t0 = time.perf_counter()
     response = await call_next(request)
