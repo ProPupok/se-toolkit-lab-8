@@ -7,11 +7,11 @@ Paste your checkpoint evidence below. Add screenshots as image files in the repo
 The agentic loop is the fundamental cycle that an AI agent follows to accomplish tasks autonomously. It typically consists of these core    
 stages:
 
- 1 Perceive — Gather information from the environment (user input, files, APIs, sensors, etc.)
- 2 Reason/Plan — Analyze the information, determine goals, and decide on a course of action
- 3 Act — Execute actions using available tools (file operations, web searches, API calls, etc.)
- 4 Observe — Receive feedback from the actions taken (outputs, errors, state changes)
- 5 Reflect/Iterate — Evaluate results, adjust the plan if needed, and continue the loop until the goal is achieved
+ 1) Perceive — Gather information from the environment (user input, files, APIs, sensors, etc.)
+ 2) Reason/Plan — Analyze the information, determine goals, and decide on a course of action
+ 3) Act — Execute actions using available tools (file operations, web searches, API calls, etc.)
+ 4) Observe — Receive feedback from the actions taken (outputs, errors, state changes)
+ 5) Reflect/Iterate — Evaluate results, adjust the plan if needed, and continue the loop until the goal is achieved
 
 
  ┌─────────────┐
