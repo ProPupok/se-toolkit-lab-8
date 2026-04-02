@@ -8,6 +8,7 @@ from pathlib import Path
 
 
 def resolve_config() -> Path:
+    """Read config.json, inject env var values, write config.resolved.json."""
     config_dir = Path(__file__).parent
     config_file = config_dir / "config.json"
     resolved_file = Path("/tmp/config.resolved.json")
@@ -15,6 +16,7 @@ def resolve_config() -> Path:
     with open(config_file) as f:
         config = json.load(f)
 
+    # Override from env vars
     llm_api_key = os.environ.get("LLM_API_KEY", "")
     llm_api_base_url = os.environ.get("LLM_API_BASE_URL", "")
     llm_api_model = os.environ.get("LLM_API_MODEL", "")
@@ -46,6 +48,7 @@ def resolve_config() -> Path:
             if lms_api_key:
                 config["tools"]["mcpServers"]["lms"]["env"]["NANOBOT_LMS_API_KEY"] = lms_api_key
 
+    # Webchat channel
     webchat_enabled = os.environ.get("NANOBOT_WEBCHAT_ENABLED", "true").lower() == "true"
     webchat_host = os.environ.get("NANOBOT_WEBCHAT_CONTAINER_ADDRESS", "0.0.0.0")
     webchat_port = os.environ.get("NANOBOT_WEBCHAT_CONTAINER_PORT", "18791")
@@ -60,33 +63,21 @@ def resolve_config() -> Path:
         "allowFrom": ["*"]
     }
 
+    # Webchat MCP server
     webchat_relay_url = os.environ.get("NANOBOT_WEBSOCKET_RELAY_URL", "")
     webchat_token = os.environ.get("NANOBOT_WEBSOCKET_TOKEN", "")
-
-    # Use the venv Python for MCP servers
-    venv_python = "/app/nanobot/.venv/bin/python"
 
     if webchat_relay_url and webchat_token:
         if "mcpServers" not in config.get("tools", {}):
             config["tools"]["mcpServers"] = {}
         config["tools"]["mcpServers"]["webchat"] = {
-            "command": venv_python,
+            "command": "python",
             "args": ["-m", "mcp_webchat"],
             "env": {
                 "NANOBOT_WEBSOCKET_RELAY_URL": webchat_relay_url,
                 "NANOBOT_WEBSOCKET_TOKEN": webchat_token
             }
         }
-
-    # Also update the LMS MCP server to use venv Python
-    if "mcpServers" in config.get("tools", {}):
-        if "lms" in config["tools"]["mcpServers"]:
-            config["tools"]["mcpServers"]["lms"]["command"] = venv_python
-
-    # Update the obs MCP server to use venv Python
-    if "mcpServers" in config.get("tools", {}):
-        if "obs" in config["tools"]["mcpServers"]:
-            config["tools"]["mcpServers"]["obs"]["command"] = venv_python
 
     with open(resolved_file, "w") as f:
         json.dump(config, f, indent=2)
@@ -95,6 +86,7 @@ def resolve_config() -> Path:
 
 
 def main():
+    """Resolve config and exec into nanobot gateway."""
     config_dir = Path(__file__).parent
     workspace_dir = config_dir / "workspace"
     resolved_config = resolve_config()
@@ -102,14 +94,13 @@ def main():
     print(f"Using config: {resolved_config}", file=sys.stderr)
     print(f"Workspace: {workspace_dir}", file=sys.stderr)
 
-    # nanobot is installed in the nanobot project's .venv
-    # Use absolute path since we're execvp
-    nanobot_path = "/app/nanobot/.venv/bin/nanobot"
-
+    # Use full path to nanobot in .venv
+    nanobot_path = Path("/app/.venv/bin/nanobot")
+    
     os.execvp(
-        nanobot_path,
+        str(nanobot_path),
         [
-            nanobot_path,
+            str(nanobot_path),
             "gateway",
             "--config",
             str(resolved_config),
