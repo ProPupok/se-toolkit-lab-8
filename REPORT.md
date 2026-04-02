@@ -5,7 +5,7 @@ Paste your checkpoint evidence below. Add screenshots as image files in the repo
 ## Task 1A — Bare agent
 
 The agentic loop is the fundamental cycle that an AI agent follows to accomplish tasks autonomously. It typically consists of these core    
-stages:
+stages :
 
  1) Perceive — Gather information from the environment (user input, files, APIs, sensors, etc.)
  2) Reason/Plan — Analyze the information, determine goals, and decide on a course of action
