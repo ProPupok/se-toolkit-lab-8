@@ -83,7 +83,7 @@ You'll:
  • Make the agent proactive with scheduled health checks
 
 The lab is designed to be done on your VM, and the system includes an LMS backend (React + FastAPI + PostgreSQL), observability stack       
-(OpenTelemetry + VictoriaLogs/Traces), and the nanobot agent layer.
+(OpenTelemetry + VictoriaLogs/Traces), and the nanobot agent layer. 
 
 Would you like me to read the details of any specific task ?
 
