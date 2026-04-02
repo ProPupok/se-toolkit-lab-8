@@ -1,0 +1,7 @@
+# Minimal pyproject.toml for Docker build context
+# This file is only used to satisfy the Dockerfile COPY instruction
+
+[project]
+name = "se-toolkit-lab-8-root"
+version = "1.0.0"
+description = "Lab 8 root project"

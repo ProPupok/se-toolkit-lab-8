@@ -4,13 +4,15 @@ WORKDIR /app
 # Copy entire workspace first
 COPY . .
 
-# Sync dependencies in nanobot (this installs mcp-lms, mcp-webchat, nanobot-webchat, mcp-obs)
+# Sync dependencies in nanobot
 WORKDIR /app/nanobot
 RUN uv sync --frozen
 
 FROM python:3.14.2-slim-bookworm
 RUN groupadd --gid 1000 nonroot && useradd --gid 1000 --uid 1000 --create-home nonroot
 COPY --from=builder --chown=nonroot:nonroot /app /app
-WORKDIR /app/nanobot
-# Use the venv Python directly to ensure correct packages are available
-CMD ["/app/nanobot/.venv/bin/python", "/app/nanobot/entrypoint.py"]
+WORKDIR /app
+ENV PATH="/app/.venv/bin:$PATH"
+RUN chown -R nonroot:nonroot /app/nanobot/workspace
+USER nonroot
+CMD ["python", "/app/nanobot/entrypoint.py"]
